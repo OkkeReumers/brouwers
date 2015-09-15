@@ -9,6 +9,7 @@ import be.vdab.dao.BrouwerDAO;
 import be.vdab.entities.Brouwer;
 
 @Service
+@ReadOnlyTransactionalService
 public class BrouwerServiceImpl implements BrouwerService {
 	private final BrouwerDAO brouwerDAO;
 
@@ -18,6 +19,7 @@ public class BrouwerServiceImpl implements BrouwerService {
 	}
 
 	@Override
+	@ModifyingTransactionalServiceMethod
 	public void create(Brouwer brouwer) {
 		brouwerDAO.create(brouwer);
 

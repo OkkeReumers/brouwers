@@ -1,11 +1,16 @@
 package be.vdab.dao;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import be.vdab.entities.Brouwer;
@@ -13,36 +18,52 @@ import be.vdab.valueobjects.Adres;
 
 @Repository
 class BrouwerDAOImpl implements BrouwerDAO {
-	private final Map<Long, Brouwer> brouwers = new ConcurrentHashMap<>();
+	private final JdbcTemplate jdbcTemplate;
+	private final BrouwerRowMapper rowMapper = new BrouwerRowMapper();
+	private final SimpleJdbcInsert simpleJdbcInsert;
 
-	BrouwerDAOImpl() {
-		brouwers.put(1L, new Brouwer(1, "Achouffe", 10000, new Adres("Route du Village", "32", 6666, "Achouffe-Wibrin")));
-		brouwers.put(2L, new Brouwer(2, "Alken", 950000, new Adres("StationStraat", "2", 3570, "Alken")));
-		brouwers.put(8L, new Brouwer(8, "Bavik", 11000, new Adres("Rijksweg", "33", 8531, "Bavikhove")));
+	private static final String BEGIN_SELECT =
+			"select id,naam,postcode,gemeente,straat,huisnr,omzet from brouwers ";
+	private static final String SQL_FIND_ALL = BEGIN_SELECT + "order by naam";
+	private static final String SQL_FIND_BY_NAAM = BEGIN_SELECT + "where naam like ? order by naam";
 
+	@Autowired
+	BrouwerDAOImpl(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+		this.jdbcTemplate = jdbcTemplate;
+		simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate);
+		simpleJdbcInsert.withTableName("brouwers");
+		simpleJdbcInsert.usingGeneratedKeyColumns("id");
 	}
 
 	@Override
 	public void create(Brouwer brouwer) {
-		brouwer.setId(Collections.max(brouwers.keySet()) + 1);
-		brouwers.put(brouwer.getId(), brouwer);
-
+		Map<String, Object> kolomWaarden = new HashMap<>();
+		kolomWaarden.put("naam", brouwer.getNaam());
+		kolomWaarden.put("postcode", brouwer.getAdres().getPostcode());
+		kolomWaarden.put("gemeente", brouwer.getAdres().getGemeente());
+		kolomWaarden.put("omzet", brouwer.getOmzet());
+		kolomWaarden.put("straat", brouwer.getAdres().getStraat());
+		kolomWaarden.put("huisnr", brouwer.getAdres().getHuisNr());
+		brouwer.setId(simpleJdbcInsert.executeAndReturnKey(kolomWaarden).longValue());
 	}
 
 	@Override
 	public List<Brouwer> findAll() {
-		return new ArrayList(brouwers.values());
+		return jdbcTemplate.query(SQL_FIND_ALL, rowMapper);
 	}
 
 	@Override
 	public List<Brouwer> findByNaam(String beginNaam) {
-		beginNaam = beginNaam.toUpperCase();
-		List<Brouwer> resultaat = new ArrayList<>();
-		for (Brouwer brouwer : brouwers.values()) {
-			if (brouwer.getNaam().toUpperCase().startsWith(beginNaam)) {
-				resultaat.add(brouwer);
-			}
+		return jdbcTemplate.query(SQL_FIND_BY_NAAM, rowMapper, beginNaam + '%');
+	}
+
+	private static class BrouwerRowMapper implements RowMapper<Brouwer> {
+		@Override
+		public Brouwer mapRow(ResultSet resultSet, int rowNum) throws SQLException {
+			return new Brouwer(resultSet.getLong("id"), resultSet.getString("naam"),
+			(Integer) resultSet.getObject("omzet"),
+			new Adres(resultSet.getString("straat"), resultSet.getString("huisnr"),
+			resultSet.getInt("postcode"), resultSet.getString("gemeente")));
 		}
-		return resultaat;
 	}
 }
