@@ -2,6 +2,7 @@ package be.vdab.entities;
 
 import java.io.Serializable;
 
+import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -10,9 +11,13 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import be.vdab.valueobjects.Adres;
 
+@Entity
+@Table(name = "brouwers")
 public class Brouwer implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue
 	private long id;
 	@NotBlank
 	private String naam;
@@ -20,6 +25,7 @@ public class Brouwer implements Serializable {
 	private Integer omzet;
 	@NotNull
 	@Valid
+    @Embedded
 	private Adres adres;
 
 	public Brouwer() {}

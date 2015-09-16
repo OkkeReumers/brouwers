@@ -26,7 +26,7 @@ public class CreateControllerBeans extends WebMvcConfigurerAdapter {
 		return resolver;
 	}
 
-	@Bean
+    @Bean
 	MessageSource messageSource() {
 		ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
 		messageSource.setBasename("classpath:/teksten");
@@ -50,7 +50,7 @@ public class CreateControllerBeans extends WebMvcConfigurerAdapter {
 
 	@Override
 	public Validator getValidator() {
-		return new SpringValidatorAdapter(validatorFactory().getValidator());
-	}
+        return new SpringValidatorAdapter(validatorFactory().getValidator());
+    }
 
 }
