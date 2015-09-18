@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
@@ -11,6 +13,7 @@ import org.hibernate.validator.constraints.SafeHtml;
 import be.vdab.constraints.Postcode;
 
 @Embeddable
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Adres implements Serializable {
 
 	private static final long serialVersionUID = 1L;

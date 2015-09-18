@@ -2,6 +2,7 @@ package be.vdab.web;
 
 import javax.servlet.Filter;
 
+import be.vdab.restservices.CreateRestControllerBeans;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -22,7 +23,8 @@ public class Initializer extends AbstractAnnotationConfigDispatcherServletInitia
 
 	@Override
 	protected Class<?>[] getServletConfigClasses() {
-		return new Class<?>[] { CreateControllerBeans.class };
+        return new Class<?>[] { CreateControllerBeans.class,
+                CreateRestControllerBeans.class };
 	}
 
 	@Override

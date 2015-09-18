@@ -3,6 +3,7 @@ package be.vdab.web;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -16,7 +17,7 @@ import be.vdab.entities.Brouwer;
 import be.vdab.services.BrouwerService;
 
 @Controller
-@RequestMapping("/brouwers")
+@RequestMapping(value = "/brouwers", produces = MediaType.TEXT_HTML_VALUE)
 class BrouwerController {
 	private static final String BROUWERS_VIEW = "brouwers/brouwers";
 	private static final String BEGIN_NAAM_VIEW = "brouwers/beginnaam";
