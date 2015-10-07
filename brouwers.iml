@@ -25,6 +25,7 @@
           <file>file://$MODULE_DIR$/src/main/java/be/vdab/web/CreateControllerBeans.java</file>
           <file>file://$MODULE_DIR$/src/main/java/be/vdab/dao/CreateDAOBeans.java</file>
           <file>file://$MODULE_DIR$/src/main/java/be/vdab/datasource/CreateDataSourceBean.java</file>
+          <file>file://$MODULE_DIR$/src/main/java/be/vdab/restservices/CreateRestControllerBeans.java</file>
           <file>file://$MODULE_DIR$/src/main/java/be/vdab/services/CreateServiceBeans.java</file>
         </fileset>
       </configuration>
